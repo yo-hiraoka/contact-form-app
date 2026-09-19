@@ -12,3 +12,6 @@ Route::post('/contacts', [ContactController::class, 'store'])
 Route::get('/thanks', function () {
     return view('contact.thanks');
 })->name('contact.thanks');
+Route::get('/admin', function () {
+    return 'ログインしています';
+})->middleware('auth')->name('admin.index');
