@@ -1,66 +1,274 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# お問い合わせフォーム
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 概要
 
-## About Laravel
+お問い合わせ内容の入力・確認・登録を行うWebアプリケーションです。
+管理者はお問い合わせの検索・詳細確認・削除、タグの管理を行うことができます。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## アプリケーションURL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- お問い合わせフォーム：http://localhost/
+- 管理画面：http://localhost/admin
+- ユーザー登録：http://localhost/register
+- ログイン：http://localhost/login
+- phpMyAdmin：http://localhost:8080
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 機能一覧
 
-## Learning Laravel
+- お問い合わせ機能
+    - お問い合わせ入力
+    - 入力内容のバリデーション
+    - お問い合わせ内容確認
+    - お問い合わせ登録
+    - サンクスページ表示
+    - カテゴリ選択
+    - タグ選択
+- 認証機能
+    - ユーザー登録
+    - ログイン
+    - ログアウト
+- 管理機能
+    - お問い合わせ一覧表示
+    - キーワード検索
+    - 性別検索
+    - お問い合わせ種類検索
+    - 日付検索
+    - ページネーション
+    - お問い合わせ詳細表示
+    - お問い合わせ削除
+    - タグの追加・編集・削除
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 使用技術
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP 8.2
+- Laravel 10.x
+- Laravel Fortify
+- MySQL 8.0
+- Nginx
+- Laravel Sail
+- Docker
+- Vite
+- Tailwind CSS 3.4
+- Alpine.js
+- phpMyAdmin
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 環境構築
 
-## Laravel Sponsors
+### Dockerビルド
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. リポジトリをクローン
 
-### Premium Partners
+```bash
+git clone git@github.com:yo-hiraoka/contact-form-app.git
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. プロジェクトディレクトリへ移動
 
-## Contributing
+```bash
+cd contact-form-app
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Composerパッケージをインストール
 
-## Code of Conduct
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Laravel環境構築
 
-## Security Vulnerabilities
+1. `.env` ファイルを作成
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cp .env.example .env
+```
 
-## License
+2. `.env` のデータベース設定を変更
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+
+3. Dockerコンテナを起動
+
+```bash
+./vendor/bin/sail up -d
+```
+
+4. アプリケーションキーを生成
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+5. マイグレーションとシーディングを実行
+
+```bash
+./vendor/bin/sail artisan migrate --seed
+```
+
+6. npmパッケージをインストール
+
+```bash
+./vendor/bin/sail npm install
+```
+
+7. Vite開発サーバーを起動
+
+```bash
+./vendor/bin/sail npm run dev
+```
+
+## ER図
+
+```mermaid
+erDiagram
+    CATEGORIES ||--o{ CONTACTS : has
+    CONTACTS ||--o{ CONTACT_TAG : has
+    TAGS ||--o{ CONTACT_TAG : has
+
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar password
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CATEGORIES {
+        bigint id PK
+        varchar content
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CONTACTS {
+        bigint id PK
+        bigint category_id FK
+        varchar first_name
+        varchar last_name
+        tinyint gender
+        varchar email
+        varchar tel
+        varchar address
+        varchar building
+        varchar detail
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    TAGS {
+        bigint id PK
+        varchar name
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CONTACT_TAG {
+        bigint id PK
+        bigint contact_id FK
+        bigint tag_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+## テーブル仕様
+
+### users
+
+| カラム名   | 型           | PRIMARY KEY | UNIQUE KEY | NOT NULL |
+| ---------- | ------------ | ----------- | ---------- | -------- |
+| id         | bigint       | ○           |            | ○        |
+| name       | varchar(255) |             |            | ○        |
+| email      | varchar(255) |             | ○          | ○        |
+| password   | varchar(255) |             |            | ○        |
+| created_at | timestamp    |             |            |          |
+| updated_at | timestamp    |             |            |          |
+
+### categories
+
+| カラム名   | 型           | PRIMARY KEY | UNIQUE KEY | NOT NULL |
+| ---------- | ------------ | ----------- | ---------- | -------- |
+| id         | bigint       | ○           |            | ○        |
+| content    | varchar(255) |             |            | ○        |
+| created_at | timestamp    |             |            |          |
+| updated_at | timestamp    |             |            |          |
+
+### contacts
+
+| カラム名    | 型           | PRIMARY KEY | FOREIGN KEY    | NOT NULL |
+| ----------- | ------------ | ----------- | -------------- | -------- |
+| id          | bigint       | ○           |                | ○        |
+| category_id | bigint       |             | categories(id) | ○        |
+| first_name  | varchar(255) |             |                | ○        |
+| last_name   | varchar(255) |             |                | ○        |
+| gender      | tinyint      |             |                | ○        |
+| email       | varchar(255) |             |                | ○        |
+| tel         | varchar(11)  |             |                | ○        |
+| address     | varchar(255) |             |                | ○        |
+| building    | varchar(255) |             |                |          |
+| detail      | varchar(120) |             |                | ○        |
+| created_at  | timestamp    |             |                |          |
+| updated_at  | timestamp    |             |                |          |
+
+### tags
+
+| カラム名   | 型          | PRIMARY KEY | UNIQUE KEY | NOT NULL |
+| ---------- | ----------- | ----------- | ---------- | -------- |
+| id         | bigint      | ○           |            | ○        |
+| name       | varchar(50) |             | ○          | ○        |
+| created_at | timestamp   |             |            |          |
+| updated_at | timestamp   |             |            |          |
+
+### contact_tag
+
+| カラム名   | 型        | PRIMARY KEY | FOREIGN KEY  | NOT NULL |
+| ---------- | --------- | ----------- | ------------ | -------- |
+| id         | bigint    | ○           |              | ○        |
+| contact_id | bigint    |             | contacts(id) | ○        |
+| tag_id     | bigint    |             | tags(id)     | ○        |
+| created_at | timestamp |             |              |          |
+| updated_at | timestamp |             |              |          |
+
+`contact_tag` では `contact_id` と `tag_id` の組み合わせにUNIQUE制約を設定しています。
+
+## APIエンドポイント
+
+API機能は今後実装予定です。
+
+## テスト
+
+### テスト実行
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+### テストカバレッジ確認
+
+```bash
+./vendor/bin/sail artisan test --coverage
+```
+
+テストカバレッジ：79.2%
+
+### コードスタイル確認
+
+```bash
+./vendor/bin/sail bin pint --test
+```
+
+## 作成者
+
+- yo-hiraoka (平岡 洋介)
