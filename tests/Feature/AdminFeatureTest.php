@@ -308,4 +308,85 @@ class AdminFeatureTest extends TestCase
             'id' => $contact->id,
         ]);
     }
+
+    public function test_authenticated_user_can_export_contacts_as_csv(): void
+    {
+        $user = User::factory()->create();
+
+        $category = Category::create([
+            'content' => '商品のお届けについて',
+        ]);
+
+        Contact::create([
+            'category_id' => $category->id,
+            'first_name' => '太郎',
+            'last_name' => '山田',
+            'gender' => 1,
+            'email' => 'taro@example.com',
+            'tel' => '09012345678',
+            'address' => '東京都渋谷区',
+            'building' => null,
+            'detail' => 'CSVテストのお問い合わせ',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/contacts/export');
+
+        $response->assertStatus(200);
+        $response->assertDownload('contacts.csv');
+
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('姓,名', $content);
+        $this->assertStringContainsString('山田,太郎', $content);
+        $this->assertStringContainsString('taro@example.com', $content);
+    }
+
+    public function test_csv_export_respects_gender_filter(): void
+    {
+        $user = User::factory()->create();
+
+        $category = Category::create([
+            'content' => '商品のお届けについて',
+        ]);
+
+        Contact::create([
+            'category_id' => $category->id,
+            'first_name' => '太郎',
+            'last_name' => '山田',
+            'gender' => 1,
+            'email' => 'taro@example.com',
+            'tel' => '09012345678',
+            'address' => '東京都渋谷区',
+            'building' => null,
+            'detail' => '男性のお問い合わせ',
+        ]);
+
+        Contact::create([
+            'category_id' => $category->id,
+            'first_name' => '花子',
+            'last_name' => '佐藤',
+            'gender' => 2,
+            'email' => 'hanako@example.com',
+            'tel' => '09087654321',
+            'address' => '東京都新宿区',
+            'building' => null,
+            'detail' => '女性のお問い合わせ',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/contacts/export?gender=2');
+
+        $response->assertStatus(200);
+        $response->assertDownload('contacts.csv');
+
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('佐藤,花子', $content);
+        $this->assertStringContainsString('hanako@example.com', $content);
+        $this->assertStringNotContainsString('山田,太郎', $content);
+        $this->assertStringNotContainsString('taro@example.com', $content);
+    }
 }
