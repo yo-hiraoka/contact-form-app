@@ -245,7 +245,30 @@ erDiagram
 
 ## APIエンドポイント
 
-API機能は今後実装予定です。
+認証不要の公開APIとして、お問い合わせ情報のCRUD操作に対応しています。
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/v1/contacts` | お問い合わせ一覧取得 |
+| GET | `/api/v1/contacts/{contact}` | お問い合わせ詳細取得 |
+| POST | `/api/v1/contacts` | お問い合わせ新規登録 |
+| PUT | `/api/v1/contacts/{contact}` | お問い合わせ更新 |
+| DELETE | `/api/v1/contacts/{contact}` | お問い合わせ削除 |
+
+### 一覧取得のクエリパラメータ
+
+`GET /api/v1/contacts` では、以下のクエリパラメータを指定できます。
+
+| Parameter | Description |
+| --- | --- |
+| `keyword` | 姓・名・メールアドレスの部分一致検索 |
+| `gender` | 性別で絞り込み（1、2、3） |
+| `category_id` | カテゴリIDで絞り込み |
+| `date` | 作成日で絞り込み（YYYY-MM-DD） |
+| `page` | ページ番号（1以上） |
+| `per_page` | 1ページあたりの取得件数（1〜100、デフォルト20件） |
+
+APIのレスポンスには、お問い合わせ情報に加えて関連するカテゴリとタグの情報が含まれます。
 
 ## テスト
 
