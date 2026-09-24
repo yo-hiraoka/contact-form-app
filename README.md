@@ -52,7 +52,7 @@
 - PHP 8.2
 - Laravel 10.x
 - Laravel Fortify
-- MySQL 8.0
+- MySQL 8.4
 - Nginx
 - Laravel Sail
 - Docker
