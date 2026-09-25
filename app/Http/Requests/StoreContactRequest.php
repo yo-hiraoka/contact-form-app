@@ -31,8 +31,8 @@ class StoreContactRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => 'お名前を入力してください',
-            'last_name.required' => 'お名前を入力してください',
+            'first_name.required' => '名を入力してください',
+            'last_name.required' => '姓を入力してください',
             'gender.required' => '性別を選択してください',
             'gender.in' => '性別を正しく選択してください',
             'email.required' => 'メールアドレスを入力してください',
@@ -43,7 +43,7 @@ class StoreContactRequest extends FormRequest
             'category_id.required' => 'お問い合わせの種類を選択してください',
             'category_id.exists' => 'お問い合わせの種類を正しく選択してください',
             'detail.required' => 'お問い合わせ内容を入力してください',
-            'detail.max' => 'お問い合わせ内容は120文字以内で入力してください',
+            'detail.max' => 'お問い合わせ内容は 120文字以内で入力してください',
             'tag_ids.array' => 'タグを正しく選択してください',
             'tag_ids.*.exists' => '存在しないタグが選択されています',
         ];
