@@ -469,4 +469,34 @@ class ContactApiTest extends TestCase
             ->assertJsonPath('data.0.first_name', '花子')
             ->assertJsonPath('data.0.last_name', '佐藤');
     }
+
+    public function test_contact_show_returns_custom_404_when_contact_does_not_exist(): void
+    {
+        $response = $this->getJson('/api/v1/contacts/999999');
+
+        $response->assertNotFound()
+            ->assertExactJson([
+                'error' => 'お問い合わせが見つかりませんでした。',
+            ]);
+    }
+
+    public function test_contact_update_returns_custom_404_when_contact_does_not_exist(): void
+    {
+        $response = $this->putJson('/api/v1/contacts/999999', []);
+
+        $response->assertNotFound()
+            ->assertExactJson([
+                'error' => 'お問い合わせが見つかりませんでした。',
+            ]);
+    }
+
+    public function test_contact_destroy_returns_custom_404_when_contact_does_not_exist(): void
+    {
+        $response = $this->deleteJson('/api/v1/contacts/999999');
+
+        $response->assertNotFound()
+            ->assertExactJson([
+                'error' => 'お問い合わせが見つかりませんでした。',
+            ]);
+    }
 }
