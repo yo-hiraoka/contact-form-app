@@ -66,6 +66,11 @@ class ContactController extends Controller
         return redirect()->route('contact.thanks');
     }
 
+    public function thanks(): View
+    {
+        return view('contact.thanks');
+    }
+
     public function export(ExportContactRequest $request)
     {
         $filters = $request->validated();
