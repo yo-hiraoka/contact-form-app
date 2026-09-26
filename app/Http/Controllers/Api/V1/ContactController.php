@@ -61,7 +61,7 @@ class ContactController extends Controller
             'detail' => $validated['detail'],
         ]);
 
-        $contact->tags()->sync($validated['tag_ids'] ?? []);
+        $contact->tags()->attach($validated['tag_ids'] ?? []);
 
         $contact->load(['category', 'tags']);
 
