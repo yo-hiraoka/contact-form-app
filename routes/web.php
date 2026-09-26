@@ -11,9 +11,8 @@ Route::post('/contacts/confirm', [ContactController::class, 'confirm'])
 Route::post('/contacts', [ContactController::class, 'store'])
     ->name('contact.store');
 
-Route::get('/thanks', function () {
-    return view('contact.thanks');
-})->name('contact.thanks');
+Route::get('/thanks', [ContactController::class, 'thanks'])
+    ->name('contact.thanks');
 Route::get('/admin', [AdminController::class, 'index'])
     ->middleware('auth')
     ->name('admin.index');
