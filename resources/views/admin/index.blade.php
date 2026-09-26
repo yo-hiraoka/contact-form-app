@@ -62,11 +62,12 @@
                             エクスポート
                         </a>
                     </div>
+                </form>
+
                     <!-- ページネーション -->
                     <div class="flex items-center">
                         {{ $contacts->appends(request()->query())->links() }}
                     </div>
-                </form>
             </div>
 
             <!-- テーブル -->
