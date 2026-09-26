@@ -42,13 +42,39 @@ class StoreTagRequestTest extends TestCase
 
         $validator = Validator::make(
             $data,
-            $request->rules()
+            $request->rules(),
+            $request->messages()
         );
 
         $this->assertTrue($validator->fails());
         $this->assertArrayHasKey(
             'name',
             $validator->errors()->toArray()
+        );
+        $this->assertSame(
+            'そのタグ名は既に使用されています',
+            $validator->errors()->first('name')
+        );
+    }
+
+    public function test_too_long_tag_name_fails_with_correct_message(): void
+    {
+        $request = new StoreTagRequest;
+
+        $data = [
+            'name' => str_repeat('あ', 51),
+        ];
+
+        $validator = Validator::make(
+            $data,
+            $request->rules(),
+            $request->messages()
+        );
+
+        $this->assertTrue($validator->fails());
+        $this->assertSame(
+            'タグ名は 50文字以内で入力してください',
+            $validator->errors()->first('name')
         );
     }
 }
