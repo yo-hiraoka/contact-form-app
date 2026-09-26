@@ -231,6 +231,17 @@ erDiagram
 | created_at  | timestamp    |             |                |          |
 | updated_at  | timestamp    |             |                |          |
 
+### 氏名フィールドについて
+
+本アプリケーションでは、氏名フィールドを以下の意味で統一しています。
+
+- `first_name`：名（例：太郎）
+- `last_name`：姓（例：山田）
+
+画面表示、Webフォーム、API、Seeder、テストでは上記の定義を使用しています。
+
+※ API仕様書の一部に異なる表記がありますが、アプリケーション全体との整合性を考慮し、本実装では上記の定義に統一しています。
+
 ### tags
 
 | カラム名   | 型          | PRIMARY KEY | UNIQUE KEY | NOT NULL |
