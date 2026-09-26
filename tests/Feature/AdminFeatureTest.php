@@ -338,9 +338,13 @@ class AdminFeatureTest extends TestCase
 
         $content = $response->streamedContent();
 
-        $this->assertStringContainsString('姓,名', $content);
-        $this->assertStringContainsString('山田,太郎', $content);
+        $this->assertStringContainsString(
+            'ID,氏名,性別,メール,電話,住所,建物,カテゴリ,内容,作成日時',
+            $content
+        );
+        $this->assertStringContainsString('山田 太郎', $content);
         $this->assertStringContainsString('taro@example.com', $content);
+        $this->assertStringNotContainsString('タグ', $content);
     }
 
     public function test_csv_export_respects_gender_filter(): void
@@ -384,9 +388,63 @@ class AdminFeatureTest extends TestCase
 
         $content = $response->streamedContent();
 
-        $this->assertStringContainsString('佐藤,花子', $content);
+        $this->assertStringContainsString('佐藤 花子', $content);
         $this->assertStringContainsString('hanako@example.com', $content);
-        $this->assertStringNotContainsString('山田,太郎', $content);
+        $this->assertStringNotContainsString('山田 太郎', $content);
         $this->assertStringNotContainsString('taro@example.com', $content);
+    }
+
+    public function test_csv_export_without_filters_returns_all_contacts_in_latest_order(): void
+    {
+        $user = User::factory()->create();
+
+        $category = Category::create([
+            'content' => '商品のお届けについて',
+        ]);
+
+        Contact::create([
+            'category_id' => $category->id,
+            'first_name' => '太郎',
+            'last_name' => '山田',
+            'gender' => 1,
+            'email' => 'old@example.com',
+            'tel' => '09012345678',
+            'address' => '東京都渋谷区',
+            'building' => null,
+            'detail' => '古いお問い合わせ',
+            'created_at' => '2026-09-01 10:00:00',
+            'updated_at' => '2026-09-01 10:00:00',
+        ]);
+
+        Contact::create([
+            'category_id' => $category->id,
+            'first_name' => '花子',
+            'last_name' => '佐藤',
+            'gender' => 2,
+            'email' => 'new@example.com',
+            'tel' => '09087654321',
+            'address' => '東京都新宿区',
+            'building' => null,
+            'detail' => '新しいお問い合わせ',
+            'created_at' => '2026-09-02 10:00:00',
+            'updated_at' => '2026-09-02 10:00:00',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/contacts/export');
+
+        $response->assertStatus(200);
+        $response->assertDownload('contacts.csv');
+
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('old@example.com', $content);
+        $this->assertStringContainsString('new@example.com', $content);
+
+        $newPosition = strpos($content, 'new@example.com');
+        $oldPosition = strpos($content, 'old@example.com');
+
+        $this->assertLessThan($newPosition, $oldPosition);
     }
 }
