@@ -38,8 +38,8 @@ class CreateNewUser implements CreatesNewUsers
             'email.email' => 'メールアドレスはメール形式で入力してください',
             'email.unique' => 'このメールアドレスはすでに登録されています',
             'password.required' => 'パスワードを入力してください',
-            'password.min' => 'パスワードは8文字以上で入力してください',
-            'password.confirmed' => 'パスワードと確認用パスワードが一致しません',
+            'password.min' => 'パスワードは 8文字以上で入力してください',
+            'password.confirmed' => 'パスワードと一致しません',
         ])->validate();
 
         return User::create([
