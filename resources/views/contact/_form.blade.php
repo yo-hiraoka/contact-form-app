@@ -8,9 +8,9 @@
     </div>
     <div class="col-span-2">
         <div class="flex gap-4">
-            <input type="text" name="last_name" placeholder="例: 山田" value="{{ old('last_name') }}"
+            <input type="text" name="last_name" placeholder="例: 山田" value="{{ old('last_name', $formData['last_name'] ?? '') }}"
                 class="flex-1 px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300" />
-            <input type="text" name="first_name" placeholder="例: 太郎" value="{{ old('first_name') }}"
+            <input type="text" name="first_name" placeholder="例: 太郎" value="{{ old('first_name', $formData['first_name'] ?? '') }}"
                 class="flex-1 px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300" />
         </div>
         @error('last_name')
@@ -33,17 +33,17 @@
     <div class="col-span-2">
         <div class="flex gap-8 py-3">
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="gender" value="1" {{ old('gender') == '1' ? 'checked' : '' }}
+                <input type="radio" name="gender" value="1" {{ old('gender', $formData['gender'] ?? '') == '1' ? 'checked' : '' }}
                     class="w-4 h-4 text-[#6b5744] border-gray-300 focus:ring-[#6b5744]" />
                 <span class="ml-2 text-gray-700">男性</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="gender" value="2" {{ old('gender') == '2' ? 'checked' : '' }}
+                <input type="radio" name="gender" value="2" {{ old('gender', $formData['gender'] ?? '') == '2' ? 'checked' : '' }}
                     class="w-4 h-4 text-[#6b5744] border-gray-300 focus:ring-[#6b5744]" />
                 <span class="ml-2 text-gray-700">女性</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="gender" value="3" {{ old('gender') == '3' ? 'checked' : '' }}
+                <input type="radio" name="gender" value="3" {{ old('gender', $formData['gender'] ?? '') == '3' ? 'checked' : '' }}
                     class="w-4 h-4 text-[#6b5744] border-gray-300 focus:ring-[#6b5744]" />
                 <span class="ml-2 text-gray-700">その他</span>
             </label>
@@ -63,7 +63,7 @@
         </label>
     </div>
     <div class="col-span-2">
-        <input type="email" name="email" placeholder="例: test@example.com" value="{{ old('email') }}"
+        <input type="email" name="email" placeholder="例: test@example.com" value="{{ old('email', $formData['email'] ?? '') }}"
             class="w-full px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300" />
         @error('email')
             <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
@@ -73,10 +73,11 @@
 
 <!-- 電話番号 -->
 @php
-    $telParts = explode('-', old('tel', ''));
-    $tel1 = old('tel1', $telParts[0] ?? '');
-    $tel2 = old('tel2', $telParts[1] ?? '');
-    $tel3 = old('tel3', $telParts[2] ?? '');
+    $tel = old('tel', $formData['tel'] ?? '');
+
+    $tel1 = old('tel1', substr($tel, 0, 3));
+    $tel2 = old('tel2', substr($tel, 3, 4));
+    $tel3 = old('tel3', substr($tel, 7));
 @endphp
 <div class="grid grid-cols-3 gap-8 mb-4">
     <div class="col-span-1 flex items-center">
@@ -99,7 +100,7 @@
                 maxlength="4"
                 class="w-28 px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300" />
         </div>
-        <input type="hidden" name="tel" id="tel" value="{{ old('tel') }}">
+        <input type="hidden" name="tel" id="tel" value="{{ old('tel', $formData['tel'] ?? '') }}">
         @error('tel')
             <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
         @enderror
@@ -115,7 +116,7 @@
         </label>
     </div>
     <div class="col-span-2">
-        <input type="text" name="address" placeholder="例: 東京都渋谷区千駄ヶ谷1-2-3" value="{{ old('address') }}"
+        <input type="text" name="address" placeholder="例: 東京都渋谷区千駄ヶ谷1-2-3" value="{{ old('address', $formData['address'] ?? '') }}"
             class="w-full px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300" />
         @error('address')
             <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
@@ -131,7 +132,7 @@
         </label>
     </div>
     <div class="col-span-2">
-        <input type="text" name="building" placeholder="例: 千駄ヶ谷マンション305" value="{{ old('building') }}"
+        <input type="text" name="building" placeholder="例: 千駄ヶ谷マンション305" value="{{ old('building', $formData['building'] ?? '') }}"
             class="w-full px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300" />
         @error('building')
             <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
@@ -151,9 +152,9 @@
         <div class="relative">
             <select name="category_id" id="category-select"
                 class="w-full px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-300 appearance-none cursor-pointer">
-                <option value="" disabled {{ old('category_id') == '' ? 'selected' : '' }}>選択してください</option>
+                <option value="" disabled {{ old('category_id', $formData['category_id'] ?? '') == '' ? 'selected' : '' }}>選択してください</option>
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                    <option value="{{ $category->id }}" {{ old('category_id', $formData['category_id'] ?? '') == $category->id ? 'selected' : '' }}>
                         {{ $category->content }}
                     </option>
                 @endforeach
@@ -183,7 +184,7 @@
             @foreach ($tags as $tag)
                 <label class="flex items-center cursor-pointer">
                     <input type="checkbox" name="tag_ids[]" value="{{ $tag->id }}"
-                        {{ in_array($tag->id, old('tag_ids', [])) ? 'checked' : '' }}
+                        {{ in_array($tag->id, old('tag_ids', $formData['tag_ids'] ?? [])) ? 'checked' : '' }}
                         class="w-4 h-4 text-[#6b5744] border-gray-300 focus:ring-[#6b5744]" />
                     <span class="ml-2 text-gray-700">{{ $tag->name }}</span>
                 </label>
@@ -203,7 +204,7 @@
     </div>
     <div class="col-span-2">
         <textarea name="detail" placeholder="お問い合わせ内容をご記載ください" rows="6"
-            class="w-full px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none">{{ old('detail') }}</textarea>
+            class="w-full px-4 py-3 bg-[#f5f5f5] border-0 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none">{{ old('detail', $formData['detail'] ?? '') }}</textarea>
         @error('detail')
             <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
         @enderror

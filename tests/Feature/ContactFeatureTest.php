@@ -32,6 +32,29 @@ class ContactFeatureTest extends TestCase
         $response->assertSee($tag->name);
     }
 
+    public function test_contact_index_receives_form_data_from_query_parameters(): void
+    {
+        $formData = [
+            'first_name' => '太郎',
+            'last_name' => '山田',
+            'gender' => '1',
+            'email' => 'taro@example.com',
+            'tel' => '09012345678',
+            'address' => '東京都渋谷区',
+            'building' => 'テストビル101',
+            'category_id' => '1',
+            'tag_ids' => ['1'],
+            'detail' => '商品について質問があります。',
+        ];
+
+        $response = $this->get('/?'.http_build_query($formData));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('contact.index');
+        $response->assertViewHas('formData', $formData);
+        $response->assertSee('name="last_name" placeholder="例: 山田" value="山田"', false);
+    }
+
     public function test_thanks_page_is_displayed(): void
     {
         $response = $this->get('/thanks');
@@ -74,6 +97,10 @@ class ContactFeatureTest extends TestCase
         $response->assertSee('太郎');
         $response->assertSee('商品のお届けについて');
         $response->assertSee('質問');
+        $response->assertSee('<form action="/" method="get">', false);
+        $response->assertSee('name="last_name" value="山田"', false);
+        $response->assertSee('name="tel" value="09012345678"', false);
+        $response->assertSee('name="tag_ids[]" value="'.$tag->id.'"', false);
     }
 
     public function test_confirm_fails_with_invalid_data(): void

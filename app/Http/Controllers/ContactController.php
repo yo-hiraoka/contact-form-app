@@ -6,16 +6,29 @@ use App\Http\Requests\StoreContactRequest;
 use App\Models\Category;
 use App\Models\Contact;
 use App\Models\Tag;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ContactController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $categories = Category::all();
         $tags = Tag::all();
+        $formData = $request->only([
+            'first_name',
+            'last_name',
+            'gender',
+            'email',
+            'tel',
+            'address',
+            'building',
+            'category_id',
+            'tag_ids',
+            'detail',
+        ]);
 
-        return view('contact.index', compact('categories', 'tags'));
+        return view('contact.index', compact('categories', 'tags', 'formData'));
     }
 
     public function confirm(StoreContactRequest $request): View
