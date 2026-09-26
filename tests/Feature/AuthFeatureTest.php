@@ -46,4 +46,24 @@ class AuthFeatureTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
     }
+
+    public function test_login_fails_with_correct_message_when_credentials_are_invalid(): void
+    {
+        User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        $response = $this->from('/login')->post('/login', [
+            'email' => 'test@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertRedirect('/login');
+        $response->assertSessionHasErrors([
+            'email' => 'ログイン情報が登録されていません',
+        ]);
+
+        $this->assertGuest();
+    }
 }
