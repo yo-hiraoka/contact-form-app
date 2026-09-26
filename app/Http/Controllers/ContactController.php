@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ExportContactRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\Models\Category;
 use App\Models\Contact;
@@ -63,5 +64,76 @@ class ContactController extends Controller
         $contact->tags()->sync($validated['tag_ids'] ?? []);
 
         return redirect()->route('contact.thanks');
+    }
+
+    public function export(ExportContactRequest $request)
+    {
+        $filters = $request->validated();
+
+        $contacts = Contact::with('category')
+            ->when($filters['keyword'] ?? null, function ($query, $keyword) {
+                $query->where(function ($query) use ($keyword) {
+                    $query->where('first_name', 'like', "%{$keyword}%")
+                        ->orWhere('last_name', 'like', "%{$keyword}%")
+                        ->orWhere('email', 'like', "%{$keyword}%");
+                });
+            })
+            ->when(
+                isset($filters['gender']) && (int) $filters['gender'] !== 0,
+                function ($query) use ($filters) {
+                    $query->where('gender', $filters['gender']);
+                }
+            )
+            ->when($filters['category_id'] ?? null, function ($query, $categoryId) {
+                $query->where('category_id', $categoryId);
+            })
+            ->when($filters['date'] ?? null, function ($query, $date) {
+                $query->whereDate('created_at', $date);
+            })
+            ->latest()
+            ->get();
+
+        return response()->streamDownload(function () use ($contacts) {
+            $handle = fopen('php://output', 'w');
+
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            fputcsv($handle, [
+                'ID',
+                '氏名',
+                '性別',
+                'メール',
+                '電話',
+                '住所',
+                '建物',
+                'カテゴリ',
+                '内容',
+                '作成日時',
+            ]);
+
+            foreach ($contacts as $contact) {
+                fputcsv($handle, [
+                    $contact->id,
+                    $contact->last_name.' '.$contact->first_name,
+                    match ($contact->gender) {
+                        1 => '男性',
+                        2 => '女性',
+                        3 => 'その他',
+                        default => '',
+                    },
+                    $contact->email,
+                    $contact->tel,
+                    $contact->address,
+                    $contact->building,
+                    $contact->category->content,
+                    $contact->detail,
+                    $contact->created_at->format('Y-m-d H:i:s'),
+                ]);
+            }
+
+            fclose($handle);
+        }, 'contacts.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
     }
 }

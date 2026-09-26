@@ -38,67 +38,6 @@ class AdminController extends Controller
         return redirect()->route('admin.index');
     }
 
-    public function export(IndexContactRequest $request)
-    {
-        $filters = $request->validated();
-
-        $contacts = $this->filteredContacts($filters)
-            ->get();
-
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="contacts.csv"',
-        ];
-
-        $callback = function () use ($contacts) {
-            $handle = fopen('php://output', 'w');
-
-            // Excelで開いたときの日本語文字化け対策
-            fwrite($handle, "\xEF\xBB\xBF");
-
-            fputcsv($handle, [
-                'ID',
-                '姓',
-                '名',
-                '性別',
-                'メールアドレス',
-                '電話番号',
-                '住所',
-                '建物名',
-                'お問い合わせ種類',
-                'タグ',
-                'お問い合わせ内容',
-                '作成日時',
-            ]);
-
-            foreach ($contacts as $contact) {
-                fputcsv($handle, [
-                    $contact->id,
-                    $contact->last_name,
-                    $contact->first_name,
-                    match ($contact->gender) {
-                        1 => '男性',
-                        2 => '女性',
-                        3 => 'その他',
-                        default => '',
-                    },
-                    $contact->email,
-                    $contact->tel,
-                    $contact->address,
-                    $contact->building,
-                    $contact->category->content,
-                    $contact->tags->pluck('name')->implode(', '),
-                    $contact->detail,
-                    $contact->created_at->format('Y-m-d H:i:s'),
-                ]);
-            }
-
-            fclose($handle);
-        };
-
-        return response()->streamDownload($callback, 'contacts.csv', $headers);
-    }
-
     private function filteredContacts(array $filters): Builder
     {
         return Contact::with(['category', 'tags'])

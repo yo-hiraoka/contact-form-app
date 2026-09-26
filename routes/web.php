@@ -17,7 +17,7 @@ Route::get('/thanks', function () {
 Route::get('/admin', [AdminController::class, 'index'])
     ->middleware('auth')
     ->name('admin.index');
-Route::get('/contacts/export', [AdminController::class, 'export'])
+Route::get('/contacts/export', [ContactController::class, 'export'])
     ->middleware('auth')
     ->name('contacts.export');
 Route::get('/admin/contacts/{contact}', [AdminController::class, 'show'])
